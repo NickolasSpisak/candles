@@ -6,7 +6,7 @@ import equals from "validator/lib/equals";
 import { showErrorMsg, showSuccessMsg } from "../helpers/message";
 import { showLoading } from "../helpers/loading";
 import { signup } from "../api/auth";
-
+import "./Signup.css";
 const Signup = () => {
   const [formData, setFormData] = useState({
     username: "",
@@ -86,14 +86,14 @@ const Signup = () => {
 
   return (
     <div className="signup-container">
-      <div className="row px-2 vh-100">
+      <div className="row px-3 vh-100">
         <div className="col-md-5 mx-auto align-self-center">
           {successMsg && showSuccessMsg(successMsg)}
           {errorMsg && showErrorMsg(errorMsg)}
           {loading && <div className="text-center pb-4">{showLoading()}</div>}
           <form className="signup-form" onSubmit={handleSubmit} noValidate>
             {/* username */}
-            <div className="form-group input-group">
+            <div className="form-group input-group pb-4">
               <div className="input-group-prepend">
                 <span className="input-group-text">
                   <i className="fa fa-user"></i>
@@ -109,7 +109,7 @@ const Signup = () => {
               />
             </div>
             {/* email */}
-            <div className="form-group input-group">
+            <div className="form-group input-group pb-4">
               <div className="input-group-prepend">
                 <span className="input-group-text">
                   <i className="fa fa-envelope"></i>
@@ -118,14 +118,14 @@ const Signup = () => {
               <input
                 name="email"
                 value={email}
-                className="input-group-prepend"
+                className="form-control"
                 placeholder="Email address"
                 type="email"
                 onChange={handleChange}
               />
             </div>
             {/* password */}
-            <div className="form-group input-group">
+            <div className="form-group input-group pb-4">
               <div className="input-group-prepend">
                 <span className="input-group-text">
                   <i className="fa fa-lock"></i>
@@ -141,7 +141,7 @@ const Signup = () => {
               />
             </div>
             {/* password2 */}
-            <div className="from-group input-group">
+            <div className="from-group input-group pb-4">
               <div className="input-group-prepend">
                 <span className="input-group-text">
                   <i className="fa fa-lock"></i>
@@ -158,7 +158,10 @@ const Signup = () => {
             </div>
             {/* signup button */}
             <div className="form-group">
-              <button type="submit" className="btn btn-primary btn-block">
+              <button
+                type="submit"
+                className="btn btn-primary btn-block form-control"
+              >
                 Signup
               </button>
             </div>

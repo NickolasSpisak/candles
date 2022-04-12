@@ -24,3 +24,12 @@ exports.validatorResult = (req, res,next) => {
     }
     next();
 }
+exports.signinValidator = (req, res, next) = [
+    check('email')
+        .isEmail()
+        .normalizeEmail()
+        .withMessage('Invalid email'),
+    check('password')
+        .isLength({min:6})
+        .withMessage('Password must be at least 6 characters long')
+    ]

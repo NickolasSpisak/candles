@@ -1,8 +1,14 @@
 import React from "react";
+import { Link, withRouter } from "react-router-dom";
 
-import { Link } from "react-router-dom";
+import { isAuthenticated, logout } from "../helpers/auth";
 
-const Header = () => {
+const Header = ({ navigate }) => {
+  const handleLogout = (e) => {
+    logout(() => {
+      navigate.push("/signin");
+    });
+  };
   return (
     <div>
       <nav className="navbar navbar-expand-lg navbar-light bg-light">
@@ -23,20 +29,54 @@ const Header = () => {
           </button>
           <div className="collapse navbar-collapse" id="navbarSupportedContent">
             <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-              <li className="nav-item">
-                <Link
-                  to="/signin"
-                  className="nav-link active"
-                  aria-current="page"
-                >
-                  Sign in
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link to="/signup" className="nav-link">
-                  Sign up
-                </Link>
-              </li>
+              {!isAuthenticated() && (
+                <>
+                  <li className="nav-item">
+                    <Link
+                      to="/signin"
+                      className="nav-link active"
+                      aria-current="page"
+                    >
+                      <i className="fas fa-sign-in-alt"></i> Sign in
+                    </Link>
+                  </li>
+                  <li className="nav-item">
+                    <Link to="/signup" className="nav-link">
+                      <i className="fas fa-edit"></i> Sign up
+                    </Link>
+                  </li>
+                </>
+              )}
+              {!isAuthenticated() && isAuthenticated().role === 0 && (
+                <>
+                  <li className="nav-item">
+                    <Link to="/user/dashboard" className="nav-link">
+                      <i className="fas fa-home"></i> Dashboard
+                    </Link>
+                  </li>
+                </>
+              )}
+              {!isAuthenticated() && isAuthenticated().role === 1 && (
+                <>
+                  <li className="nav-item">
+                    <Link to="/admin/dashboard" className="nav-link">
+                      <i className="fas fa-home"></i> Dashboard
+                    </Link>
+                  </li>
+                </>
+              )}
+              {!isAuthenticated() && (
+                <>
+                  <li className="nav-item">
+                    <button
+                      className="btn btn-link text-secondary text-decoration-none pl-0"
+                      onClick={handleLogout}
+                    >
+                      <i className="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                  </li>
+                </>
+              )}
             </ul>
             <form className="d-flex">
               <input
@@ -55,4 +95,4 @@ const Header = () => {
     </div>
   );
 };
-export default Header;
+export default withRouter(Header);

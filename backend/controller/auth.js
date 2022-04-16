@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 const User = require("../models/User");
-
+import {jwtSecret, jwtExpire} from "../controller/keys.js"
 exports.signupController = (req, res) => {
   const { username, email, password } = req.body;
   try {
@@ -37,7 +37,7 @@ exports.signinController = (req, res) => {
                 errorMessage: 'Invalid credentials'
             })
         }
-        const isMatch = await bcrypt.compare(password, user.email)
+        const isMatch = await bcrypt.compare(password, user.password)
         if (!isMatch) {
             return res.status(400).json({
                 errorMessage: "Invalid credentials"
@@ -48,7 +48,14 @@ exports.signinController = (req, res) => {
                 _id: user._id,
             },
         };
-        
+        jwt.sign(payload, jwtSecret, {expiresIn: jwtExpire}, (err, token)=> {
+            if (err) console.log('jwt err:', err)
+            const {_id, username, email, role} = user
+            res.json({
+                token,
+                user: {_id, username, email, role}
+            })
+        })
     } catch (err) {
         console.log("Signin controller", err)
         res.status(500).json({

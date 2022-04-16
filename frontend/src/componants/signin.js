@@ -1,20 +1,30 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { showErrorMsg } from "../helpers/message";
 import { showLoading } from "../helpers/loading";
 import { signin } from "../api/auth";
 import isEmail from "validator/lib/isEmail";
 import isEmpty from "validator/lib/isEmpty";
+import { isAuthenticated, setAuthentication } from "../helpers/auth";
 import "./Signup.css";
 const Signin = () => {
+  let navigate = useNavigate();
+  useEffect(() => {
+    if (isAuthenticated() && isAuthenticated().role === 1) {
+      console.log("Redirecting to admin dashboard");
+      navigate.push("/admin/dashboard");
+    } else if (isAuthenticated() && isAuthenticated().role === 0) {
+      console.log("Redirecting to user dashboard");
+      navigate.push("/user/dashboard");
+    }
+  }, [navigate]);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
     errorMsg: false,
     loading: false,
-    redirectToDashboard: false,
   });
-  const { email, password, errorMsg, loading, redirectToDashboard } = formData;
+  const { email, password, errorMsg, loading } = formData;
   const handleChange = (evt) => {
     setFormData({
       ...formData,
@@ -39,7 +49,25 @@ const Signin = () => {
       const data = { email, password };
 
       setFormData({ ...formData, loading: true });
-      signin(data);
+      signin(data)
+        .then((response) => {
+          setAuthentication(response.data.token, response.data.user);
+          if (isAuthenticated() && isAuthenticated().role === 1) {
+            console.log("Redirecting to admin dashboard");
+            navigate.push("/admin/dashboard");
+          } else {
+            console.log("Redirecting to user dashboard");
+            navigate.push("/user/dashboard");
+          }
+        })
+        .catch((err) => {
+          console.log("signin api function error:", err);
+          setFormData({
+            ...formData,
+            loading: false,
+            errorMsg: err.response.data.errorMessage,
+          });
+        });
     }
   };
 

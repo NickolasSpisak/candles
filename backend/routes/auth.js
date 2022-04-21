@@ -1,10 +1,13 @@
-import express from "express";
-import {
+const express = require("express");
+const {
   signupValidator,
-  validatorResult,
   signinValidator,
-} from "../middleware/validator.js";
-import { signupController, signinController } from "../controller/auth.js";
+  validatorResult,
+} = require("../middleware/validator");
+const {
+  signupController,
+  signinController,
+} = require("../controllers/auth.js");
 const router = express.Router();
 
 router.post("/signup", signupValidator, validatorResult, signupController);

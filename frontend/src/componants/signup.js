@@ -1,29 +1,29 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import isEmail from "validator/lib/isEmail";
 import isEmpty from "validator/lib/isEmpty";
+import isEmail from "validator/lib/isEmail";
 import equals from "validator/lib/equals";
 import { showErrorMsg, showSuccessMsg } from "../helpers/message";
-import { isAuthenticated } from "../helpers/auth";
 import { showLoading } from "../helpers/loading";
+import { isAuthenticated } from "../helpers/auth";
+import { Link, useHistory } from "react-router-dom";
 import { signup } from "../api/auth";
 import "./Signup.css";
 const Signup = () => {
-  let navigate = useNavigate();
+  let history = useHistory();
+
   useEffect(() => {
     if (isAuthenticated() && isAuthenticated().role === 1) {
-      console.log("Redirecting to admin dashboard");
-      navigate.push("/admin/dashboard");
+      history.push("/admin/dashboard");
     } else if (isAuthenticated() && isAuthenticated().role === 0) {
-      console.log("Redirecting to user dashboard");
-      navigate.push("/user/dashboard");
+      history.push("/user/dashboard");
     }
-  }, [navigate]);
+  }, [history]);
+
   const [formData, setFormData] = useState({
-    username: "",
-    email: "",
-    password: "",
-    password2: "",
+    username: "johndoe",
+    email: "jdoe@gmail.com",
+    password: "abc123",
+    password2: "abc123",
     successMsg: false,
     errorMsg: false,
     loading: false,
@@ -37,7 +37,11 @@ const Signup = () => {
     errorMsg,
     loading,
   } = formData;
+  /****************************
+   * EVENT HANDLERS
+   ***************************/
   const handleChange = (evt) => {
+    //console.log(evt);
     setFormData({
       ...formData,
       [evt.target.name]: evt.target.value,
@@ -45,8 +49,11 @@ const Signup = () => {
       errorMsg: "",
     });
   };
+
   const handleSubmit = (evt) => {
     evt.preventDefault();
+
+    // client-side validation
     if (
       isEmpty(username) ||
       isEmpty(email) ||
@@ -72,9 +79,10 @@ const Signup = () => {
       const data = { username, email, password };
 
       setFormData({ ...formData, loading: true });
+
       signup(data)
         .then((response) => {
-          console.log(response);
+          console.log("Axios signup success: ", response);
           setFormData({
             username: "",
             email: "",
@@ -85,7 +93,7 @@ const Signup = () => {
           });
         })
         .catch((err) => {
-          console.log("Axios signup error:", err);
+          console.log("Axios signup error: ", err);
           setFormData({
             ...formData,
             loading: false,
@@ -95,6 +103,91 @@ const Signup = () => {
     }
   };
 
+  /****************************
+   * VIEWS
+   ***************************/
+  const showSignupForm = () => (
+    <form className="signup-form" onSubmit={handleSubmit} noValidate>
+      {/* username */}
+      <div className="form-group input-group">
+        <div className="input-group-prepend">
+          <span className="input-group-text">
+            <i className="fa fa-user"></i>
+          </span>
+        </div>
+        <input
+          name="username"
+          value={username}
+          className="form-control"
+          placeholder="Username"
+          type="text"
+          onChange={handleChange}
+        />
+      </div>
+      {/* email */}
+      <div className="form-group input-group">
+        <div className="input-group-prepend">
+          <span className="input-group-text">
+            <i className="fa fa-envelope"></i>
+          </span>
+        </div>
+        <input
+          name="email"
+          value={email}
+          className="form-control"
+          placeholder="Email address"
+          type="email"
+          onChange={handleChange}
+        />
+      </div>
+      {/* password */}
+      <div className="form-group input-group">
+        <div className="input-group-prepend">
+          <span className="input-group-text">
+            <i className="fa fa-lock"></i>
+          </span>
+        </div>
+        <input
+          name="password"
+          value={password}
+          className="form-control"
+          placeholder="Create password"
+          type="password"
+          onChange={handleChange}
+        />
+      </div>
+      {/* password2 */}
+      <div className="form-group input-group">
+        <div className="input-group-prepend">
+          <span className="input-group-text">
+            <i className="fa fa-lock"></i>
+          </span>
+        </div>
+        <input
+          name="password2"
+          value={password2}
+          className="form-control"
+          placeholder="Confirm password"
+          type="password"
+          onChange={handleChange}
+        />
+      </div>
+      {/* signup button */}
+      <div className="form-group">
+        <button type="submit" className="btn btn-primary btn-block">
+          Signup
+        </button>
+      </div>
+      {/* already have account */}
+      <p className="text-center text-white">
+        Have an account? <Link to="/signin">Log In</Link>
+      </p>
+    </form>
+  );
+
+  /****************************
+   * RENDERER
+   ***************************/
   return (
     <div className="signup-container">
       <div className="row px-3 vh-100">
@@ -102,88 +195,12 @@ const Signup = () => {
           {successMsg && showSuccessMsg(successMsg)}
           {errorMsg && showErrorMsg(errorMsg)}
           {loading && <div className="text-center pb-4">{showLoading()}</div>}
-          <form className="signup-form" onSubmit={handleSubmit} noValidate>
-            {/* username */}
-            <div className="form-group input-group pb-4">
-              <div className="input-group-prepend">
-                <span className="input-group-text">
-                  <i className="fa fa-user"></i>
-                </span>
-              </div>
-              <input
-                name="username"
-                value={username}
-                className="form-control"
-                placeholder="Username"
-                type="text"
-                onChange={handleChange}
-              />
-            </div>
-            {/* email */}
-            <div className="form-group input-group pb-4">
-              <div className="input-group-prepend">
-                <span className="input-group-text">
-                  <i className="fa fa-envelope"></i>
-                </span>
-              </div>
-              <input
-                name="email"
-                value={email}
-                className="form-control"
-                placeholder="Email address"
-                type="email"
-                onChange={handleChange}
-              />
-            </div>
-            {/* password */}
-            <div className="form-group input-group pb-4">
-              <div className="input-group-prepend">
-                <span className="input-group-text">
-                  <i className="fa fa-lock"></i>
-                </span>
-              </div>
-              <input
-                name="password"
-                value={password}
-                className="form-control"
-                placeholder="Create Password"
-                type="password"
-                onChange={handleChange}
-              />
-            </div>
-            {/* password2 */}
-            <div className="from-group input-group pb-4">
-              <div className="input-group-prepend">
-                <span className="input-group-text">
-                  <i className="fa fa-lock"></i>
-                </span>
-              </div>
-              <input
-                name="password2"
-                value={password2}
-                className="form-control"
-                placeholder="Confirm Password"
-                type="password"
-                onChange={handleChange}
-              />
-            </div>
-            {/* signup button */}
-            <div className="form-group">
-              <button
-                type="submit"
-                className="btn btn-primary btn-block form-control"
-              >
-                Signup
-              </button>
-            </div>
-            {/*already have account */}
-            <p className="text-center text-white">
-              Have an account? <Link to="/signin">Log in</Link>
-            </p>
-          </form>
+          {showSignupForm()}
+          {/* <p style={{ color: 'white' }}>{JSON.stringify(formData)}</p> */}
         </div>
       </div>
     </div>
   );
 };
+
 export default Signup;

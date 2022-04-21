@@ -1,6 +1,10 @@
 import React from "react";
 
 const NotFound = () => {
-  return <></>;
+  return (
+    <>
+      <p>Inside not found Component</p>
+    </>
+  );
 };
 export default NotFound;

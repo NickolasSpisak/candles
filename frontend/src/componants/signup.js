@@ -7,7 +7,7 @@ import { showLoading } from "../helpers/loading";
 import { isAuthenticated } from "../helpers/auth";
 import { Link, useHistory } from "react-router-dom";
 import { signup } from "../api/auth";
-import "./Signup.css";
+
 const Signup = () => {
   let history = useHistory();
 

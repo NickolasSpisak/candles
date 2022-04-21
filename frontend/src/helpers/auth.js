@@ -9,6 +9,7 @@ export const setAuthentication = (token, user) => {
   setCookie("token", token);
   setLocalStorage("user", user);
 };
+
 export const isAuthenticated = () => {
   if (getCookie("token") && getLocalStorage("user")) {
     return getLocalStorage("user");
@@ -16,8 +17,10 @@ export const isAuthenticated = () => {
     return false;
   }
 };
+
 export const logout = (next) => {
   deleteCookie("token");
   deleteLocalStorage("user");
+
   next();
 };
